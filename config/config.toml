@@ -1,0 +1,9 @@
+[database]
+Type = "postgres"
+Host = "localhost"
+Port = 5432
+User = "postgres"
+Password = "123123"
+Name = ""
+SSLMode = "disable"
+TimeZone = "Asia/Ho_Chi_Minh"
