@@ -89,6 +89,14 @@ func main() {
 	}
 	defer dbConn.Close()
 
+	// Create database tables if they don't exist
+	if err := db.CreateUsersTable(dbConn); err != nil {
+		log.Printf("Warning: failed to create users table: %v", err)
+	}
+	if err := db.CreateTablesIfNotExist(dbConn); err != nil {
+		log.Printf("Warning: failed to create chat tables: %v", err)
+	}
+
 	// Create a gRPC server
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
@@ -104,6 +112,10 @@ func main() {
 	// Register the Auth service
 	auth := &authServer{db: dbConn}
 	pb.RegisterAuthServiceServer(s, auth)
+
+	// Register the Chat service
+	chat := newChatServer(dbConn)
+	pb.RegisterChatServiceServer(s, chat)
 
 	// Register reflection service on gRPC server (useful for tools like grpcurl)
 	reflection.Register(s)
