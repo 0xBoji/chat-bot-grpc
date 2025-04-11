@@ -4,19 +4,41 @@ package room;
 
 option go_package = "grpc-messenger-core/proto/room";
 
+import "google/api/annotations.proto";
+
 // Room service for managing chat rooms
 service RoomService {
   // CreateRoom creates a new chat room
-  rpc CreateRoom(CreateRoomRequest) returns (RoomResponse) {}
-  
+  rpc CreateRoom(CreateRoomRequest) returns (RoomResponse) {
+    option (google.api.http) = {
+      post: "/room/create-room"
+      body: "*"
+    };
+  }
+
   // GetRooms retrieves all rooms the user is a member of
-  rpc GetRooms(GetRoomsRequest) returns (GetRoomsResponse) {}
-  
+  rpc GetRooms(GetRoomsRequest) returns (GetRoomsResponse) {
+    option (google.api.http) = {
+      post: "/room/get-rooms"
+      body: "*"
+    };
+  }
+
   // JoinRoom adds a user to a room
-  rpc JoinRoom(JoinRoomRequest) returns (JoinRoomResponse) {}
-  
+  rpc JoinRoom(JoinRoomRequest) returns (JoinRoomResponse) {
+    option (google.api.http) = {
+      post: "/room/join-room"
+      body: "*"
+    };
+  }
+
   // LeaveRoom removes a user from a room
-  rpc LeaveRoom(LeaveRoomRequest) returns (LeaveRoomResponse) {}
+  rpc LeaveRoom(LeaveRoomRequest) returns (LeaveRoomResponse) {
+    option (google.api.http) = {
+      post: "/room/leave-room"
+      body: "*"
+    };
+  }
 }
 
 // Request to create a room

@@ -4,14 +4,26 @@ package chat;
 
 option go_package = "grpc-messenger-core/proto/chat";
 
+import "google/api/annotations.proto";
+
 // Chat service for messaging
 service ChatService {
   // SendMessage sends a message to a room
-  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse) {}
-  
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse) {
+    option (google.api.http) = {
+      post: "/chat/send-message"
+      body: "*"
+    };
+  }
+
   // GetRoomMessages retrieves messages from a room
-  rpc GetRoomMessages(GetRoomMessagesRequest) returns (GetRoomMessagesResponse) {}
-  
+  rpc GetRoomMessages(GetRoomMessagesRequest) returns (GetRoomMessagesResponse) {
+    option (google.api.http) = {
+      post: "/chat/get-room-messages"
+      body: "*"
+    };
+  }
+
   // StreamRoomMessages establishes a streaming connection for real-time messages in a room
   rpc StreamRoomMessages(StreamRoomMessagesRequest) returns (stream MessageResponse) {}
 }

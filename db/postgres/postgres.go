@@ -13,8 +13,8 @@ const (
 	defaultHost     = "localhost"
 	defaultPort     = 5432
 	defaultUser     = "postgres"
-	defaultPassword = "postgres"
-	defaultDBName   = "chatbox"
+	defaultPassword = ""
+	defaultDBName   = "postgres"
 	defaultSSLMode  = "disable"
 )
 

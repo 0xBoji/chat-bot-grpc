@@ -24,7 +24,7 @@ var (
 	authServiceAddr = flag.String("auth-service", "localhost:50051", "Auth service address")
 	chatServiceAddr = flag.String("chat-service", "localhost:50052", "Chat service address")
 	roomServiceAddr = flag.String("room-service", "localhost:50053", "Room service address")
-	
+
 	// Gateway port
 	gatewayPort = flag.Int("gateway-port", 8080, "Gateway server port")
 )
@@ -64,10 +64,35 @@ func main() {
 		logger.Fatalf("Failed to register room service handler: %v", err)
 	}
 
+	// Create a CORS wrapper
+	corsHandler := func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Get the origin from the request
+			origin := r.Header.Get("Origin")
+			if origin == "" {
+				// Default to localhost:3001 if no origin is provided
+				origin = "http://localhost:3001"
+			}
+
+			// Set CORS headers
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				return
+			}
+
+			h.ServeHTTP(w, r)
+		})
+	}
+
 	// Create HTTP server
 	server := &http.Server{
 		Addr:    fmt.Sprintf(":%d", *gatewayPort),
-		Handler: mux,
+		Handler: corsHandler(mux),
 	}
 
 	// Start server in a goroutine

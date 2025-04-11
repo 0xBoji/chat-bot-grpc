@@ -4,16 +4,33 @@ package auth;
 
 option go_package = "grpc-messenger-core/proto/auth";
 
+import "google/api/annotations.proto";
+
 // Authentication service for user registration and login
 service AuthService {
   // Register creates a new user account
-  rpc Register(RegisterRequest) returns (RegisterResponse) {}
-  
+  rpc Register(RegisterRequest) returns (RegisterResponse) {
+    option (google.api.http) = {
+      post: "/auth/register"
+      body: "*"
+    };
+  }
+
   // Login authenticates a user and returns a token
-  rpc Login(LoginRequest) returns (LoginResponse) {}
-  
+  rpc Login(LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/auth/login"
+      body: "*"
+    };
+  }
+
   // ValidateToken validates a JWT token
-  rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse) {}
+  rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse) {
+    option (google.api.http) = {
+      post: "/auth/validate-token"
+      body: "*"
+    };
+  }
 }
 
 // Request to register a new user
