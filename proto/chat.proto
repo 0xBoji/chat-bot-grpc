@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package chat;
 
-option go_package = "first-grpc/proto";
+option go_package = "grpc-messenger-core/proto";
 
 service ChatService {
   // Room management

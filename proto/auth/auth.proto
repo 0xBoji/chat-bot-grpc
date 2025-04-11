@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "grpc-messenger-core/proto/auth";
+
+// Authentication service for user registration and login
+service AuthService {
+  // Register creates a new user account
+  rpc Register(RegisterRequest) returns (RegisterResponse) {}
+  
+  // Login authenticates a user and returns a token
+  rpc Login(LoginRequest) returns (LoginResponse) {}
+  
+  // ValidateToken validates a JWT token
+  rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse) {}
+}
+
+// Request to register a new user
+message RegisterRequest {
+  string username = 1;
+  string password = 2;
+}
+
+// Response to a registration request
+message RegisterResponse {
+  bool success = 1;
+  string message = 2;
+  int64 user_id = 3;
+}
+
+// Request to login
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+// Response to a login request
+message LoginResponse {
+  bool success = 1;
+  string message = 2;
+  string token = 3;
+  int64 user_id = 4;
+  string username = 5;
+}
+
+// Request to validate a token
+message ValidateTokenRequest {
+  string token = 1;
+}
+
+// Response to a token validation request
+message ValidateTokenResponse {
+  bool valid = 1;
+  string message = 2;
+  int64 user_id = 3;
+  string username = 4;
+  int64 expires_at = 5;
+}

@@ -1,4 +1,4 @@
-module first-grpc
+module grpc-messenger-core
 
 go 1.23.0
 

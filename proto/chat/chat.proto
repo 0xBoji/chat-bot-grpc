@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "grpc-messenger-core/proto/chat";
+
+// Chat service for messaging
+service ChatService {
+  // SendMessage sends a message to a room
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse) {}
+  
+  // GetRoomMessages retrieves messages from a room
+  rpc GetRoomMessages(GetRoomMessagesRequest) returns (GetRoomMessagesResponse) {}
+  
+  // StreamRoomMessages establishes a streaming connection for real-time messages in a room
+  rpc StreamRoomMessages(StreamRoomMessagesRequest) returns (stream MessageResponse) {}
+}
+
+// Request to send a message
+message SendMessageRequest {
+  string content = 1;
+  int64 sender_id = 2;
+  int64 room_id = 3;
+}
+
+// Response to a send message request
+message SendMessageResponse {
+  bool success = 1;
+  string message = 2;
+  int64 message_id = 3;
+}
+
+// Request to get messages from a room
+message GetRoomMessagesRequest {
+  int64 room_id = 1;
+  int64 user_id = 2;
+  int64 limit = 3;
+  int64 offset = 4;
+}
+
+// Response to a get messages request
+message GetRoomMessagesResponse {
+  repeated MessageResponse messages = 1;
+}
+
+// Request to stream messages from a room
+message StreamRoomMessagesRequest {
+  int64 room_id = 1;
+  int64 user_id = 2;
+}
+
+// Message response
+message MessageResponse {
+  int64 id = 1;
+  string content = 2;
+  int64 sender_id = 3;
+  int64 room_id = 4;
+  string sender_name = 5;
+  string timestamp = 6;
+}

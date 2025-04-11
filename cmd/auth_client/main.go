@@ -7,7 +7,7 @@ import (
 	"log"
 	"time"
 
-	pb "first-grpc/proto"
+	pb "grpc-messenger-core/proto"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

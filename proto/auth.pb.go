@@ -395,7 +395,7 @@ const file_proto_auth_proto_rawDesc = "" +
 	"\vAuthService\x12;\n" +
 	"\bRegister\x12\x15.auth.RegisterRequest\x1a\x16.auth.RegisterResponse\"\x00\x122\n" +
 	"\x05Login\x12\x12.auth.LoginRequest\x1a\x13.auth.LoginResponse\"\x00\x12J\n" +
-	"\rValidateToken\x12\x1a.auth.ValidateTokenRequest\x1a\x1b.auth.ValidateTokenResponse\"\x00B\x12Z\x10first-grpc/protob\x06proto3"
+	"\rValidateToken\x12\x1a.auth.ValidateTokenRequest\x1a\x1b.auth.ValidateTokenResponse\"\x00B\x1bZ\x19grpc-messenger-core/protob\x06proto3"
 
 var (
 	file_proto_auth_proto_rawDescOnce sync.Once

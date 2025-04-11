@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package auth;
 
-option go_package = "first-grpc/proto";
+option go_package = "grpc-messenger-core/proto";
 
 service AuthService {
   rpc Register (RegisterRequest) returns (RegisterResponse) {}

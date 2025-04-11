@@ -4,8 +4,8 @@ import (
 	"log"
 	"net"
 
-	"first-grpc/db"
-	pb "first-grpc/proto"
+	"grpc-messenger-core/db"
+	pb "grpc-messenger-core/proto"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"

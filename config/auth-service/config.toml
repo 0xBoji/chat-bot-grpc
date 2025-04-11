@@ -1,0 +1,21 @@
+# Auth Service Configuration
+
+[server]
+port = 50051
+host = "0.0.0.0"
+
+[database]
+host = "localhost"
+port = 5432
+user = "postgres"
+password = "postgres"
+dbname = "chatbox"
+sslmode = "disable"
+
+[jwt]
+secret = "your-secret-key"
+expiration = "24h"
+
+[log]
+level = "info"
+format = "json"

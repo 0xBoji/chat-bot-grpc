@@ -1,6 +1,6 @@
-# gRPC Authentication Service Documentation
+# gRPC Chat Room Service Documentation
 
-Welcome to the documentation for our gRPC authentication service. This documentation is intended for frontend developers who need to integrate with our backend services.
+Welcome to the documentation for our gRPC chat room service. This documentation is intended for frontend developers who need to integrate with our backend services.
 
 ## Table of Contents
 
@@ -31,7 +31,7 @@ Once you're ready to set up your frontend project, follow the [gRPC-Web Setup Gu
 Our backend provides the following gRPC services:
 
 1. **AuthService**: Handles user registration, login, and token validation
-2. **HelloService**: A simple greeting service that supports authenticated requests
+2. **ChatService**: Manages chat rooms and messaging functionality
 
 ## Authentication Flow
 

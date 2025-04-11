@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"log"
 
-	"first-grpc/db"
-	pb "first-grpc/proto"
+	"grpc-messenger-core/db"
+	pb "grpc-messenger-core/proto"
 )
 
 type authServer struct {

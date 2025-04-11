@@ -8,10 +8,9 @@ import (
 	"log"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
-	pb "first-grpc/proto"
+	pb "grpc-messenger-core/proto"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -38,7 +37,6 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	var token string
 	var userID int64
-	var username string
 
 	for {
 		fmt.Println("\n=== Chat Bot Client ===")
@@ -55,7 +53,7 @@ func main() {
 
 		switch option {
 		case "1":
-			token, userID, username = login(authClient, scanner)
+			token, userID = login(authClient, scanner)
 		case "2":
 			register(authClient, scanner)
 		case "3":
@@ -85,7 +83,7 @@ func main() {
 	}
 }
 
-func login(client pb.AuthServiceClient, scanner *bufio.Scanner) (string, int64, string) {
+func login(client pb.AuthServiceClient, scanner *bufio.Scanner) (string, int64) {
 	fmt.Print("Enter username: ")
 	scanner.Scan()
 	username := scanner.Text()
@@ -104,16 +102,16 @@ func login(client pb.AuthServiceClient, scanner *bufio.Scanner) (string, int64, 
 
 	if err != nil {
 		log.Printf("Login failed: %v", err)
-		return "", 0, ""
+		return "", 0
 	}
 
 	if !resp.Success {
 		fmt.Printf("Login failed: %s\n", resp.Message)
-		return "", 0, ""
+		return "", 0
 	}
 
 	fmt.Printf("Login successful! User ID: %d\n", resp.UserId)
-	return resp.Token, resp.UserId, username
+	return resp.Token, resp.UserId
 }
 
 func register(client pb.AuthServiceClient, scanner *bufio.Scanner) {
@@ -155,18 +153,21 @@ func sendMessage(client pb.ChatServiceClient, scanner *bufio.Scanner, token stri
 	scanner.Scan()
 	content := scanner.Text()
 
-	fmt.Print("Enter receiver ID (leave empty for broadcast): ")
+	fmt.Print("Enter room ID: ")
 	scanner.Scan()
-	receiverIDStr := scanner.Text()
+	roomIDStr := scanner.Text()
 
-	var receiverID int64
-	if receiverIDStr != "" {
+	var roomID int64
+	if roomIDStr != "" {
 		var err error
-		receiverID, err = strconv.ParseInt(receiverIDStr, 10, 64)
+		roomID, err = strconv.ParseInt(roomIDStr, 10, 64)
 		if err != nil {
-			fmt.Println("Invalid receiver ID, using broadcast")
-			receiverID = 0
+			fmt.Println("Invalid room ID")
+			return
 		}
+	} else {
+		fmt.Println("Room ID is required")
+		return
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -179,9 +180,9 @@ func sendMessage(client pb.ChatServiceClient, scanner *bufio.Scanner, token stri
 	ctx = metadata.NewOutgoingContext(ctx, md)
 
 	resp, err := client.SendMessage(ctx, &pb.SendMessageRequest{
-		Content:    content,
-		SenderId:   senderID,
-		ReceiverId: receiverID,
+		Content:  content,
+		SenderId: senderID,
+		RoomId:   roomID,
 	})
 
 	if err != nil {
@@ -197,6 +198,23 @@ func sendMessage(client pb.ChatServiceClient, scanner *bufio.Scanner, token stri
 }
 
 func getMessages(client pb.ChatServiceClient, scanner *bufio.Scanner, token string, userID int64) {
+	fmt.Print("Enter room ID: ")
+	scanner.Scan()
+	roomIDStr := scanner.Text()
+
+	var roomID int64
+	if roomIDStr != "" {
+		var err error
+		roomID, err = strconv.ParseInt(roomIDStr, 10, 64)
+		if err != nil {
+			fmt.Println("Invalid room ID")
+			return
+		}
+	} else {
+		fmt.Println("Room ID is required")
+		return
+	}
+
 	fmt.Print("Enter limit (default 10): ")
 	scanner.Scan()
 	limitStr := scanner.Text()
@@ -230,7 +248,8 @@ func getMessages(client pb.ChatServiceClient, scanner *bufio.Scanner, token stri
 	})
 	ctx = metadata.NewOutgoingContext(ctx, md)
 
-	resp, err := client.GetMessages(ctx, &pb.GetMessagesRequest{
+	resp, err := client.GetRoomMessages(ctx, &pb.GetRoomMessagesRequest{
+		RoomId: roomID,
 		UserId: userID,
 		Limit:  limit,
 		Offset: offset,
@@ -248,15 +267,29 @@ func getMessages(client pb.ChatServiceClient, scanner *bufio.Scanner, token stri
 
 	fmt.Println("\n=== Messages ===")
 	for _, msg := range resp.Messages {
-		receiverStr := "Broadcast"
-		if msg.ReceiverId != 0 {
-			receiverStr = fmt.Sprintf("User %d", msg.ReceiverId)
-		}
-		fmt.Printf("[%s] %s -> %s: %s\n", msg.Timestamp, msg.SenderName, receiverStr, msg.Content)
+		fmt.Printf("[%s] %s: %s\n", msg.Timestamp, msg.SenderName, msg.Content)
 	}
 }
 
 func streamMessages(client pb.ChatServiceClient, token string, userID int64) {
+	fmt.Print("Enter room ID: ")
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	roomIDStr := scanner.Text()
+
+	var roomID int64
+	if roomIDStr != "" {
+		var err error
+		roomID, err = strconv.ParseInt(roomIDStr, 10, 64)
+		if err != nil {
+			fmt.Println("Invalid room ID")
+			return
+		}
+	} else {
+		fmt.Println("Room ID is required")
+		return
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -266,7 +299,8 @@ func streamMessages(client pb.ChatServiceClient, token string, userID int64) {
 	})
 	ctx = metadata.NewOutgoingContext(ctx, md)
 
-	stream, err := client.StreamMessages(ctx, &pb.StreamMessagesRequest{
+	stream, err := client.StreamRoomMessages(ctx, &pb.StreamRoomMessagesRequest{
+		RoomId: roomID,
 		UserId: userID,
 	})
 	if err != nil {
@@ -290,11 +324,7 @@ func streamMessages(client pb.ChatServiceClient, token string, userID int64) {
 				return
 			}
 
-			receiverStr := "Broadcast"
-			if msg.ReceiverId != 0 {
-				receiverStr = fmt.Sprintf("User %d", msg.ReceiverId)
-			}
-			fmt.Printf("[%s] %s -> %s: %s\n", msg.Timestamp, msg.SenderName, receiverStr, msg.Content)
+			fmt.Printf("[%s] %s: %s\n", msg.Timestamp, msg.SenderName, msg.Content)
 		}
 	}()
 

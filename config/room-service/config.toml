@@ -1,0 +1,20 @@
+# Room Service Configuration
+
+[server]
+port = 50053
+host = "0.0.0.0"
+
+[database]
+host = "localhost"
+port = 5432
+user = "postgres"
+password = "postgres"
+dbname = "chatbox"
+sslmode = "disable"
+
+[jwt]
+secret = "your-secret-key"
+
+[log]
+level = "info"
+format = "json"

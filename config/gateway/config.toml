@@ -1,0 +1,19 @@
+# API Gateway Configuration
+
+[server]
+port = 8080
+host = "0.0.0.0"
+
+[services]
+auth_service = "localhost:50051"
+chat_service = "localhost:50052"
+room_service = "localhost:50053"
+
+[cors]
+allowed_origins = ["*"]
+allowed_methods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+allowed_headers = ["Content-Type", "Authorization"]
+
+[log]
+level = "info"
+format = "json"

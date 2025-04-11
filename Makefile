@@ -1,18 +1,44 @@
-.PHONY: proto server auth-client chat-client room-chat-client
+.PHONY: proto build run clean test auth-service chat-service room-service gateway clients
 
+# Generate protobuf files
 proto:
-	protoc --go_out=. --go_opt=paths=source_relative \
-		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
-		proto/auth.proto proto/chat.proto
+	./scripts/proto-gen.sh
 
-server:
-	go run server/*.go
+# Build all services
+build: proto
+	./scripts/build.sh
 
+# Run services
+auth-service:
+	go run cmd/auth-service/main.go
+
+chat-service:
+	go run cmd/chat-service/main.go
+
+room-service:
+	go run cmd/room-service/main.go
+
+gateway:
+	go run cmd/gateway/main.go
+
+# Run clients
 auth-client:
-	go run cmd/auth_client/main.go
+	go run cmd/clients/auth_client/main.go
 
 chat-client:
-	go run cmd/chat_client/main.go
+	go run cmd/clients/chat_client/main.go
 
 room-chat-client:
-	go run cmd/room_chat_client/main.go
+	go run cmd/clients/room_chat_client/main.go
+
+# Clean build artifacts
+clean:
+	rm -rf bin/
+
+# Run tests
+test:
+	go test -v ./...
+
+# Deploy services
+deploy: build
+	./scripts/deploy.sh

@@ -948,7 +948,7 @@ const file_proto_chat_proto_rawDesc = "" +
 	"\tLeaveRoom\x12\x16.chat.LeaveRoomRequest\x1a\x17.chat.LeaveRoomResponse\"\x00\x12D\n" +
 	"\vSendMessage\x12\x18.chat.SendMessageRequest\x1a\x19.chat.SendMessageResponse\"\x00\x12P\n" +
 	"\x0fGetRoomMessages\x12\x1c.chat.GetRoomMessagesRequest\x1a\x1d.chat.GetRoomMessagesResponse\"\x00\x12P\n" +
-	"\x12StreamRoomMessages\x12\x1f.chat.StreamRoomMessagesRequest\x1a\x15.chat.MessageResponse\"\x000\x01B\x12Z\x10first-grpc/protob\x06proto3"
+	"\x12StreamRoomMessages\x12\x1f.chat.StreamRoomMessagesRequest\x1a\x15.chat.MessageResponse\"\x000\x01B\x1bZ\x19grpc-messenger-core/protob\x06proto3"
 
 var (
 	file_proto_chat_proto_rawDescOnce sync.Once

@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"first-grpc/db"
-	pb "first-grpc/proto"
+	"grpc-messenger-core/db"
+	pb "grpc-messenger-core/proto"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
