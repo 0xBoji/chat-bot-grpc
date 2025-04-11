@@ -1,4 +1,4 @@
-.PHONY: proto build run clean test auth-service chat-service room-service gateway clients server
+.PHONY: proto build run clean test test-coverage auth-service chat-service room-service gateway clients server start-all frontend init-db
 
 # Generate protobuf files
 proto:
@@ -17,9 +17,23 @@ server:
 	go run cmd/chat-service/main.go &
 	@echo "Starting Room Service on port 50053"
 	go run cmd/room-service/main.go &
-	@echo "Starting API Gateway on port 8080"
-	go run cmd/gateway/main.go &
+	@echo "Starting API Gateway on port 8082"
+	go run cmd/gateway/main.go --gateway-port=8082 &
 	@echo "All services are running. Press Ctrl+C to stop all services."
+	@wait
+
+# Run Next.js frontend
+frontend:
+	cd ../chatbox-next && npm run dev
+
+# Run all services and frontend
+start-all:
+	@echo "Starting all services and frontend..."
+	@echo "Starting backend services..."
+	make server &
+	@echo "Starting frontend..."
+	make frontend &
+	@echo "All services and frontend are running. Press Ctrl+C to stop all services."
 	@wait
 
 # Run individual services
@@ -51,7 +65,17 @@ clean:
 
 # Run tests
 test:
-	go test -v ./...
+	./scripts/run-tests.sh
+
+# Run tests with coverage
+test-coverage:
+	go test -v -coverprofile=coverage.out ./...
+	go tool cover -html=coverage.out -o coverage.html
+	open coverage.html
+
+# Initialize database
+init-db:
+	./scripts/init-db.sh
 
 # Deploy services
 deploy: build
