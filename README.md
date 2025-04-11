@@ -16,14 +16,12 @@ A chat room service built with gRPC and Go, featuring authentication, room manag
 ```bash
 .
 ├── Makefile                # Build and run commands
-├── client                  # Simple client for testing
-│   └── main.go
 ├── cmd                     # Command-line tools
 │   ├── auth_client         # Authentication client
 │   │   └── main.go
 │   ├── chat_client         # Chat client
 │   │   └── main.go
-│   └── db_test             # Database test utility
+│   └── room_chat_client    # Room-based chat client
 │       └── main.go
 ├── config                  # Configuration files
 │   └── config.toml
@@ -37,8 +35,7 @@ A chat room service built with gRPC and Go, featuring authentication, room manag
 │   └── grpc_web_setup.md
 ├── proto                   # Protocol buffer definitions
 │   ├── auth.proto          # Authentication service
-│   ├── chat.proto          # Chat service
-│   └── hello.proto         # Hello service (example)
+│   └── chat.proto          # Chat service
 └── server                  # Server implementation
     ├── auth_server.go      # Authentication service implementation
     ├── chat_server.go      # Chat service implementation
@@ -67,7 +64,7 @@ A chat room service built with gRPC and Go, featuring authentication, room manag
    make server
    ```
 
-5. Run the room chat client:
+5. Run the room-based chat client:
 
    ```bash
    make room-chat-client
