@@ -1,4 +1,4 @@
-.PHONY: proto build run clean test test-coverage auth-service chat-service room-service gateway clients server start-all frontend init-db
+.PHONY: proto build run clean test auth-service chat-service room-service gateway clients server start-all frontend
 
 # Generate protobuf files
 proto:
@@ -65,17 +65,7 @@ clean:
 
 # Run tests
 test:
-	./scripts/run-tests.sh
-
-# Run tests with coverage
-test-coverage:
-	go test -v -coverprofile=coverage.out ./...
-	go tool cover -html=coverage.out -o coverage.html
-	open coverage.html
-
-# Initialize database
-init-db:
-	./scripts/init-db.sh
+	go test -v ./...
 
 # Deploy services
 deploy: build

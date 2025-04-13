@@ -11,7 +11,6 @@ import (
 
 	"grpc-messenger-core/db/postgres"
 	"grpc-messenger-core/internal/chat"
-	"grpc-messenger-core/internal/middleware"
 	pb "grpc-messenger-core/proto/chat"
 
 	"google.golang.org/grpc"
@@ -44,11 +43,8 @@ func main() {
 		logger.Fatalf("Failed to listen: %v", err)
 	}
 
-	// Create gRPC server with interceptors
-	s := grpc.NewServer(
-		grpc.UnaryInterceptor(middleware.ErrorInterceptor(logger)),
-		grpc.StreamInterceptor(middleware.StreamErrorInterceptor(logger)),
-	)
+	// Create gRPC server
+	s := grpc.NewServer()
 
 	// Create chat service
 	chatService := chat.NewChatService(db, logger)

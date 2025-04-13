@@ -427,11 +427,11 @@ const file_proto_chat_chat_proto_rawDesc = "" +
 	"\aroom_id\x18\x04 \x01(\x03R\x06roomId\x12\x1f\n" +
 	"\vsender_name\x18\x05 \x01(\tR\n" +
 	"senderName\x12\x1c\n" +
-	"\ttimestamp\x18\x06 \x01(\tR\ttimestamp2\xb6\x02\n" +
+	"\ttimestamp\x18\x06 \x01(\tR\ttimestamp2\xd6\x02\n" +
 	"\vChatService\x12a\n" +
 	"\vSendMessage\x12\x18.chat.SendMessageRequest\x1a\x19.chat.SendMessageResponse\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/chat/send-message\x12r\n" +
-	"\x0fGetRoomMessages\x12\x1c.chat.GetRoomMessagesRequest\x1a\x1d.chat.GetRoomMessagesResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/chat/get-room-messages\x12P\n" +
-	"\x12StreamRoomMessages\x12\x1f.chat.StreamRoomMessagesRequest\x1a\x15.chat.MessageResponse\"\x000\x01B Z\x1egrpc-messenger-core/proto/chatb\x06proto3"
+	"\x0fGetRoomMessages\x12\x1c.chat.GetRoomMessagesRequest\x1a\x1d.chat.GetRoomMessagesResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/chat/get-room-messages\x12p\n" +
+	"\x12StreamRoomMessages\x12\x1f.chat.StreamRoomMessagesRequest\x1a\x15.chat.MessageResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/chat/stream-messages0\x01B Z\x1egrpc-messenger-core/proto/chatb\x06proto3"
 
 var (
 	file_proto_chat_chat_proto_rawDescOnce sync.Once

@@ -11,7 +11,6 @@ import (
 
 	"grpc-messenger-core/db/postgres"
 	"grpc-messenger-core/internal/auth"
-	"grpc-messenger-core/internal/middleware"
 	pb "grpc-messenger-core/proto/auth"
 
 	"google.golang.org/grpc"
@@ -44,11 +43,8 @@ func main() {
 		logger.Fatalf("Failed to listen: %v", err)
 	}
 
-	// Create gRPC server with interceptors
-	s := grpc.NewServer(
-		grpc.UnaryInterceptor(middleware.ErrorInterceptor(logger)),
-		grpc.StreamInterceptor(middleware.StreamErrorInterceptor(logger)),
-	)
+	// Create gRPC server
+	s := grpc.NewServer()
 
 	// Create auth service
 	authService := auth.NewAuthService(db, logger)

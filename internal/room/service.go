@@ -17,17 +17,19 @@ import (
 // RoomService implements the RoomService gRPC service
 type RoomService struct {
 	pb.UnimplementedRoomServiceServer
-	db     *sql.DB
-	logger *log.Logger
-	repo   *room.Repository
+	db        *sql.DB
+	logger    *log.Logger
+	repo      *room.Repository
+	mockRooms []*pb.RoomResponse // For testing purposes
 }
 
 // NewRoomService creates a new room service
 func NewRoomService(db *sql.DB, logger *log.Logger) *RoomService {
 	return &RoomService{
-		db:     db,
-		logger: logger,
-		repo:   room.NewRepository(db),
+		db:        db,
+		logger:    logger,
+		repo:      room.NewRepository(db),
+		mockRooms: make([]*pb.RoomResponse, 0),
 	}
 }
 
@@ -52,12 +54,20 @@ func (s *RoomService) CreateRoom(ctx context.Context, req *pb.CreateRoomRequest)
 	// For testing purposes, if db is nil, return a mock room
 	if s.db == nil {
 		s.logger.Println("Database connection is nil, returning mock room")
-		return &pb.RoomResponse{
-			Id:          1,
+
+		// Create a new mock room with a unique ID
+		mockRoomID := int64(len(s.mockRooms) + 2) // Start from 2 since 1 is reserved for General
+		mockRoom := &pb.RoomResponse{
+			Id:          mockRoomID,
 			Name:        req.Name,
 			Description: req.Description,
 			CreatorId:   req.CreatorId,
-		}, nil
+		}
+
+		// Add the mock room to our in-memory store
+		s.mockRooms = append(s.mockRooms, mockRoom)
+
+		return mockRoom, nil
 	}
 
 	// Create room in database
@@ -98,15 +108,30 @@ func (s *RoomService) GetRooms(ctx context.Context, req *pb.GetRoomsRequest) (*p
 	// For testing purposes, if db is nil, return mock rooms
 	if s.db == nil {
 		s.logger.Println("Database connection is nil, returning mock rooms")
-		return &pb.GetRoomsResponse{
-			Rooms: []*pb.RoomResponse{
-				{
-					Id:          1,
-					Name:        "General",
-					Description: "General chat room",
-					CreatorId:   req.UserId,
-				},
+
+		// Create a list of mock rooms
+		mockRooms := []*pb.RoomResponse{
+			{
+				Id:          1,
+				Name:        "General",
+				Description: "General chat room",
+				CreatorId:   req.UserId,
 			},
+		}
+
+		// Check if we have any newly created rooms in memory
+		if len(s.mockRooms) > 0 {
+			// Add the mock rooms to the response
+			for _, room := range s.mockRooms {
+				// Only include rooms where the user is a member
+				if room.CreatorId == req.UserId {
+					mockRooms = append(mockRooms, room)
+				}
+			}
+		}
+
+		return &pb.GetRoomsResponse{
+			Rooms: mockRooms,
 		}, nil
 	}
 

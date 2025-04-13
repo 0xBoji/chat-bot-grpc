@@ -25,7 +25,12 @@ service ChatService {
   }
 
   // StreamRoomMessages establishes a streaming connection for real-time messages in a room
-  rpc StreamRoomMessages(StreamRoomMessagesRequest) returns (stream MessageResponse) {}
+  rpc StreamRoomMessages(StreamRoomMessagesRequest) returns (stream MessageResponse) {
+    option (google.api.http) = {
+      post: "/chat/stream-messages"
+      body: "*"
+    };
+  }
 }
 
 // Request to send a message

@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "grpc-messenger-core/proto";
+
+service ChatService {
+  // Room management
+  rpc CreateRoom (CreateRoomRequest) returns (RoomResponse) {}
+  rpc GetRooms (GetRoomsRequest) returns (GetRoomsResponse) {}
+  rpc JoinRoom (JoinRoomRequest) returns (JoinRoomResponse) {}
+  rpc LeaveRoom (LeaveRoomRequest) returns (LeaveRoomResponse) {}
+
+  // Messaging
+  rpc SendMessage (SendMessageRequest) returns (SendMessageResponse) {}
+  rpc GetRoomMessages (GetRoomMessagesRequest) returns (GetRoomMessagesResponse) {}
+  rpc StreamRoomMessages (StreamRoomMessagesRequest) returns (stream MessageResponse) {}
+}
+
+// Room related messages
+message CreateRoomRequest {
+  string name = 1;
+  string description = 2;
+  int64 creator_id = 3;
+  bool is_private = 4;
+}
+
+message RoomResponse {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  int64 creator_id = 4;
+  bool is_private = 5;
+  string created_at = 6;
+}
+
+message GetRoomsRequest {
+  int64 user_id = 1;
+  bool include_private = 2;
+  int64 limit = 3;
+  int64 offset = 4;
+}
+
+message GetRoomsResponse {
+  repeated RoomResponse rooms = 1;
+}
+
+message JoinRoomRequest {
+  int64 room_id = 1;
+  int64 user_id = 2;
+}
+
+message JoinRoomResponse {
+  bool success = 1;
+  string message = 2;
+  RoomResponse room = 3;
+}
+
+message LeaveRoomRequest {
+  int64 room_id = 1;
+  int64 user_id = 2;
+}
+
+message LeaveRoomResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// Message related messages
+message SendMessageRequest {
+  string content = 1;
+  int64 sender_id = 2;
+  int64 room_id = 3;
+}
+
+message SendMessageResponse {
+  bool success = 1;
+  string message = 2;
+  int64 message_id = 3;
+}
+
+message GetRoomMessagesRequest {
+  int64 room_id = 1;
+  int64 user_id = 2; // For authorization
+  int64 limit = 3;
+  int64 offset = 4;
+}
+
+message GetRoomMessagesResponse {
+  repeated MessageResponse messages = 1;
+}
+
+message StreamRoomMessagesRequest {
+  int64 room_id = 1;
+  int64 user_id = 2; // For authorization
+}
+
+message MessageResponse {
+  int64 id = 1;
+  string content = 2;
+  int64 sender_id = 3;
+  int64 room_id = 4;
+  string sender_name = 5;
+  string timestamp = 6;
+}

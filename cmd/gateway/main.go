@@ -64,18 +64,43 @@ func main() {
 		logger.Fatalf("Failed to register room service handler: %v", err)
 	}
 
+	// Create a debug wrapper to log requests
+	debugHandler := func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Log the request
+			logger.Printf("Request: %s %s", r.Method, r.URL.Path)
+
+			// Log the authorization header
+			authHeader := r.Header.Get("Authorization")
+			if authHeader != "" {
+				logger.Printf("Authorization header: %s", authHeader)
+			} else {
+				logger.Printf("No Authorization header found")
+			}
+
+			h.ServeHTTP(w, r)
+		})
+	}
+
 	// Create a CORS wrapper
 	corsHandler := func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// Get the origin from the request
 			origin := r.Header.Get("Origin")
 			if origin == "" {
-				// Default to localhost:3001 if no origin is provided
-				origin = "http://localhost:3001"
+				// Default to localhost:3000 if no origin is provided
+				origin = "http://localhost:3000"
+			}
+
+			// Allow localhost:3000 and localhost:3001
+			if origin == "http://localhost:3000" || origin == "http://localhost:3001" {
+				w.Header().Set("Access-Control-Allow-Origin", origin)
+			} else {
+				// For other origins, use a wildcard
+				w.Header().Set("Access-Control-Allow-Origin", "*")
 			}
 
 			// Set CORS headers
-			w.Header().Set("Access-Control-Allow-Origin", origin)
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 			w.Header().Set("Access-Control-Allow-Credentials", "true")
@@ -92,7 +117,7 @@ func main() {
 	// Create HTTP server
 	server := &http.Server{
 		Addr:    fmt.Sprintf(":%d", *gatewayPort),
-		Handler: corsHandler(mux),
+		Handler: corsHandler(debugHandler(mux)),
 	}
 
 	// Start server in a goroutine

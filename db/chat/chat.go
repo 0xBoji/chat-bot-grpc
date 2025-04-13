@@ -20,7 +20,7 @@ type Message struct {
 // Repository handles database operations for chat
 type Repository struct {
 	db *sql.DB
-	
+
 	// For real-time messaging
 	roomSubscriptions     map[int64][]chan Message
 	roomSubscriptionMutex sync.RWMutex
@@ -29,8 +29,8 @@ type Repository struct {
 // NewRepository creates a new chat repository
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{
-		db:                 db,
-		roomSubscriptions:  make(map[int64][]chan Message),
+		db:                db,
+		roomSubscriptions: make(map[int64][]chan Message),
 	}
 }
 
@@ -77,7 +77,7 @@ func (r *Repository) SaveMessage(ctx context.Context, content string, senderID, 
 		SenderName: senderName,
 		Timestamp:  timestamp,
 	}
-	r.notifyRoomSubscribers(roomID, message)
+	r.NotifyRoomSubscribers(roomID, message)
 
 	return messageID, nil
 }
@@ -150,8 +150,8 @@ func (r *Repository) UnsubscribeFromRoom(roomID int64, ch chan Message) {
 	}
 }
 
-// notifyRoomSubscribers notifies all subscribers of a new message
-func (r *Repository) notifyRoomSubscribers(roomID int64, message Message) {
+// NotifyRoomSubscribers notifies all subscribers of a new message
+func (r *Repository) NotifyRoomSubscribers(roomID int64, message Message) {
 	r.roomSubscriptionMutex.RLock()
 	defer r.roomSubscriptionMutex.RUnlock()
 

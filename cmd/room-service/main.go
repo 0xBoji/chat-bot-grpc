@@ -10,7 +10,6 @@ import (
 	"syscall"
 
 	"grpc-messenger-core/db/postgres"
-	"grpc-messenger-core/internal/middleware"
 	"grpc-messenger-core/internal/room"
 	pb "grpc-messenger-core/proto/room"
 
@@ -44,11 +43,8 @@ func main() {
 		logger.Fatalf("Failed to listen: %v", err)
 	}
 
-	// Create gRPC server with interceptors
-	s := grpc.NewServer(
-		grpc.UnaryInterceptor(middleware.ErrorInterceptor(logger)),
-		grpc.StreamInterceptor(middleware.StreamErrorInterceptor(logger)),
-	)
+	// Create gRPC server
+	s := grpc.NewServer()
 
 	// Create room service
 	roomService := room.NewRoomService(db, logger)
